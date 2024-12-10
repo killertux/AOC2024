@@ -1,3 +1,5 @@
 .idea/
 **/target/
 **/dist-newstyle/
+**/example.txt
+**/input.txt
