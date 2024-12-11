@@ -52,6 +52,7 @@ fn solve_part_two(file: &str, n_iterations: usize) -> Result<usize> {
     for stone in stones {
         result += solve_with_memoization(&mut memoization, stone, n_iterations);
     }
+    println!("Solved with {} different memoizations", memoization.len());
     Ok(result)
 }
 
