@@ -84,7 +84,7 @@ fn solve_with_memoization(
         }
     };
     memoization.insert((stone, n_iterations), result);
-    return result;
+    result
 }
 
 fn read_stones(file: &str) -> Result<Vec<i64>> {
@@ -92,9 +92,8 @@ fn read_stones(file: &str) -> Result<Vec<i64>> {
         .trim()
         .split(' ')
         .map(|word| {
-            Ok(word
-                .parse()
-                .map_err(|err| Error::new(ErrorKind::InvalidData, err))?)
+            word.parse()
+                .map_err(|err| Error::new(ErrorKind::InvalidData, err))
         })
         .collect::<Result<Vec<i64>>>()
 }

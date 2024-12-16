@@ -4,7 +4,6 @@ use std::{
     fs::read_to_string,
     io::Result,
     rc::Rc,
-    u64,
 };
 
 fn main() -> Result<()> {
@@ -43,7 +42,7 @@ fn find_least_cost_paths(
     walls: &HashSet<(usize, usize)>,
 ) -> (u64, Vec<List<Reindeer>>) {
     let mut list_of_nodes_to_visit = BTreeMap::new();
-    list_of_nodes_to_visit.insert(0, vec![List::new().prepend(reindeer)]);
+    list_of_nodes_to_visit.insert(0, vec![List::default().prepend(reindeer)]);
     let mut cost_map = HashMap::new();
     let mut possible_paths = Vec::new();
     let mut min_cost = u64::MAX;
@@ -360,10 +359,6 @@ struct Node<T> {
 }
 
 impl<T> List<T> {
-    pub fn new() -> Self {
-        List { head: None }
-    }
-
     pub fn prepend(&self, elem: T) -> List<T> {
         List {
             head: Some(Rc::new(Node {
@@ -387,6 +382,12 @@ impl<T> List<T> {
         Iter {
             next: self.head.as_deref(),
         }
+    }
+}
+
+impl<T> Default for List<T> {
+    fn default() -> Self {
+        List { head: None }
     }
 }
 

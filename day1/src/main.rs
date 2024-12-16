@@ -31,7 +31,7 @@ fn part_1() -> std::io::Result<()> {
     let result: i64 = list_1
         .into_sorted_vec()
         .into_iter()
-        .zip(list_2.into_sorted_vec().into_iter())
+        .zip(list_2.into_sorted_vec())
         .map(|(element1, element2)| element2 - element1)
         .map(|n| n.abs())
         .sum();

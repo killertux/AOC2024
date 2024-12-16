@@ -25,7 +25,8 @@ fn part2(file: &str) -> std::io::Result<i64> {
     Ok(sum_middle_pages(fixed_updates))
 }
 
-fn load_rules_and_updates(file: &str) -> Result<(HashMap<i64, Vec<i64>>, Vec<Vec<i64>>)> {
+type RulesAndUpdate = (HashMap<i64, Vec<i64>>, Vec<Vec<i64>>);
+fn load_rules_and_updates(file: &str) -> Result<RulesAndUpdate> {
     let buf_read = BufReader::new(File::open(file)?);
     let (rules, updates): (Vec<_>, Vec<_>) = buf_read
         .lines()
@@ -60,14 +61,14 @@ fn load_rules_and_updates(file: &str) -> Result<(HashMap<i64, Vec<i64>>, Vec<Vec
     let updates = updates
         .into_iter()
         .map(|line| {
-            Ok(line?
+            line?
                 .split(',')
                 .map(|split| {
-                    Ok(split
+                    split
                         .parse()
-                        .map_err(|err| Error::new(ErrorKind::InvalidData, err))?)
+                        .map_err(|err| Error::new(ErrorKind::InvalidData, err))
                 })
-                .collect::<Result<Vec<i64>>>()?)
+                .collect::<Result<Vec<i64>>>()
         })
         .collect::<Result<Vec<Vec<i64>>>>()?;
     Ok((rules, updates))

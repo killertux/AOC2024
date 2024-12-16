@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{stdin, BufRead, BufReader, Error, ErrorKind, Result},
+    io::{BufRead, BufReader, Error, ErrorKind, Result},
 };
 
 fn main() -> Result<()> {
@@ -29,8 +29,7 @@ fn part_2(file: &str, map_size: (usize, usize)) -> Result<i64> {
     let n = find_iteration_with_highest_quadrant_density(robots.clone(), &map_size, 10000) + 1;
     println!("Chosen iteration {n}");
     let mut map: Vec<Vec<char>> = (0..map_size.1)
-        .into_iter()
-        .map(|_| (0..map_size.0).into_iter().map(|_| ' ').collect())
+        .map(|_| (0..map_size.0).map(|_| ' ').collect())
         .collect();
     for _ in 0..n {
         for robot in robots.iter_mut() {
@@ -128,7 +127,7 @@ fn find_iteration_with_highest_quadrant_density(
     let mut chosen_iteration = 0;
     for i in 0..limit {
         for robot in robots.iter_mut() {
-            robot.walk(&map_size);
+            robot.walk(map_size);
         }
         let mut quadrants = calculate_robots_per_quadrant(map_size, &robots);
         quadrants.sort();
@@ -157,10 +156,10 @@ impl Robot {
             self.position.1 += map_size.1 as i64;
         }
         if self.position.0 > (map_size.0 - 1) as i64 {
-            self.position.0 = self.position.0 % map_size.0 as i64;
+            self.position.0 %= map_size.0 as i64;
         }
         if self.position.1 > (map_size.1 - 1) as i64 {
-            self.position.1 = self.position.1 % map_size.1 as i64;
+            self.position.1 %= map_size.1 as i64;
         }
     }
 }
@@ -170,7 +169,7 @@ fn draw_map(map: &[Vec<char>]) {
         for column in row {
             print!("{}", column);
         }
-        println!("");
+        println!();
     }
 }
 

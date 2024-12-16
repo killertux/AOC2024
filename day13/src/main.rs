@@ -80,19 +80,15 @@ fn parse_button(line: String) -> Result<Button> {
     let x_move = part1
         .split_once('+')
         .map(|(_, n)| {
-            Ok::<i64, Error>(
-                n.parse::<i64>()
-                    .map_err(|err| Error::new(ErrorKind::InvalidData, err))?,
-            )
+            n.parse::<i64>()
+                .map_err(|err| Error::new(ErrorKind::InvalidData, err))
         })
         .ok_or(Error::new(ErrorKind::InvalidData, "Missing `+`"))??;
     let y_move = part2
         .split_once('+')
         .map(|(_, n)| {
-            Ok::<i64, Error>(
-                n.parse::<i64>()
-                    .map_err(|err| Error::new(ErrorKind::InvalidData, err))?,
-            )
+            n.parse::<i64>()
+                .map_err(|err| Error::new(ErrorKind::InvalidData, err))
         })
         .ok_or(Error::new(ErrorKind::InvalidData, "Missing `+`"))??;
     Ok(Button { x_move, y_move })
@@ -105,19 +101,15 @@ fn parse_prize(line: String) -> Result<(i64, i64)> {
     let x = part1
         .split_once('=')
         .map(|(_, n)| {
-            Ok::<i64, Error>(
-                n.parse::<i64>()
-                    .map_err(|err| Error::new(ErrorKind::InvalidData, err))?,
-            )
+            n.parse::<i64>()
+                .map_err(|err| Error::new(ErrorKind::InvalidData, err))
         })
         .ok_or(Error::new(ErrorKind::InvalidData, "Missing `=`"))??;
     let y = part2
         .split_once('=')
         .map(|(_, n)| {
-            Ok::<i64, Error>(
-                n.parse::<i64>()
-                    .map_err(|err| Error::new(ErrorKind::InvalidData, err))?,
-            )
+            n.parse::<i64>()
+                .map_err(|err| Error::new(ErrorKind::InvalidData, err))
         })
         .ok_or(Error::new(ErrorKind::InvalidData, "Missing `=`"))??;
     Ok((x, y))

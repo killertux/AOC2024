@@ -15,24 +15,20 @@ fn part_1(file: &str) -> Result<usize> {
     for region in regions {
         let mut perimeter = 0;
         for plant in &region.plants {
-            if plant.0 > 0 && map[plant.0 - 1][plant.1] != region.plant_type {
-                perimeter += 1;
-            } else if plant.0 == 0 {
+            if plant.0 > 0 && map[plant.0 - 1][plant.1] != region.plant_type || plant.0 == 0 {
                 perimeter += 1;
             }
-            if plant.0 < map.len() - 1 && map[plant.0 + 1][plant.1] != region.plant_type {
-                perimeter += 1;
-            } else if plant.0 == map.len() - 1 {
-                perimeter += 1;
-            }
-            if plant.1 > 0 && map[plant.0][plant.1 - 1] != region.plant_type {
-                perimeter += 1;
-            } else if plant.1 == 0 {
+            if plant.0 < map.len() - 1 && map[plant.0 + 1][plant.1] != region.plant_type
+                || plant.0 == map.len() - 1
+            {
                 perimeter += 1;
             }
-            if plant.1 < map[plant.0].len() - 1 && map[plant.0][plant.1 + 1] != region.plant_type {
+            if plant.1 > 0 && map[plant.0][plant.1 - 1] != region.plant_type || plant.1 == 0 {
                 perimeter += 1;
-            } else if plant.1 == map[plant.0].len() - 1 {
+            }
+            if plant.1 < map[plant.0].len() - 1 && map[plant.0][plant.1 + 1] != region.plant_type
+                || plant.1 == map[plant.0].len() - 1
+            {
                 perimeter += 1;
             }
         }
@@ -47,9 +43,8 @@ fn part_2(file: &str) -> Result<usize> {
     let mut total_cost = 0;
     for region in regions {
         let mut corners = 0;
-        region.plant_type;
         for plant in &region.plants {
-            let neighborhood = create_neighborhood_check(plant.clone(), &map);
+            let neighborhood = create_neighborhood_check(*plant, &map);
             let horizontal_budies = neighborhood[1][0] as usize + neighborhood[1][2] as usize;
             let vertical_budies = neighborhood[0][1] as usize + neighborhood[2][1] as usize;
             let outer_corners = match (horizontal_budies, vertical_budies) {

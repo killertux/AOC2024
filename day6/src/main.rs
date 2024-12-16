@@ -84,38 +84,34 @@ impl Guard {
     pub fn walk(&mut self, map: &[Vec<char>]) {
         match self.direction {
             Direction::Up => {
-                if self.y != 0 {
-                    if map[self.y as usize - 1][self.x as usize] == '#' {
-                        self.direction = Direction::Right;
-                        return self.walk(map);
-                    }
+                if self.y != 0 && map[self.y as usize - 1][self.x as usize] == '#' {
+                    self.direction = Direction::Right;
+                    return self.walk(map);
                 }
                 self.y -= 1;
             }
             Direction::Down => {
-                if self.y as usize != map.len() - 1 {
-                    if map[self.y as usize + 1][self.x as usize] == '#' {
-                        self.direction = Direction::Left;
-                        return self.walk(map);
-                    }
+                if self.y as usize != map.len() - 1
+                    && map[self.y as usize + 1][self.x as usize] == '#'
+                {
+                    self.direction = Direction::Left;
+                    return self.walk(map);
                 }
                 self.y += 1;
             }
             Direction::Right => {
-                if self.x as usize != map[0].len() - 1 {
-                    if map[self.y as usize][self.x as usize + 1] == '#' {
-                        self.direction = Direction::Down;
-                        return self.walk(map);
-                    }
+                if self.x as usize != map[0].len() - 1
+                    && map[self.y as usize][self.x as usize + 1] == '#'
+                {
+                    self.direction = Direction::Down;
+                    return self.walk(map);
                 }
                 self.x += 1;
             }
             Direction::Left => {
-                if self.x != 0 {
-                    if map[self.y as usize][self.x as usize - 1] == '#' {
-                        self.direction = Direction::Up;
-                        return self.walk(map);
-                    }
+                if self.x != 0 && map[self.y as usize][self.x as usize - 1] == '#' {
+                    self.direction = Direction::Up;
+                    return self.walk(map);
                 }
                 self.x -= 1;
             }
@@ -133,9 +129,9 @@ enum Direction {
 
 fn walk_and_return_postions(mut guard: Guard, map: &[Vec<char>]) -> HashSet<(isize, isize)> {
     let mut list_of_guard_positions: HashSet<(isize, isize)> = HashSet::new();
-    while guard.is_inside_map(&map) {
+    while guard.is_inside_map(map) {
         list_of_guard_positions.insert((guard.y, guard.x));
-        guard.walk(&map);
+        guard.walk(map);
     }
     list_of_guard_positions
 }
@@ -143,12 +139,12 @@ fn walk_and_return_postions(mut guard: Guard, map: &[Vec<char>]) -> HashSet<(isi
 fn do_we_have_a_loop(mut guard: Guard, map: &[Vec<char>]) -> bool {
     let mut list_of_guard_positions: HashSet<Guard> = HashSet::new();
     let mut loop_found = false;
-    while guard.is_inside_map(&map) {
+    while guard.is_inside_map(map) {
         if !list_of_guard_positions.insert(guard.clone()) {
             loop_found = true;
             break;
         }
-        guard.walk(&map);
+        guard.walk(map);
     }
     loop_found
 }
