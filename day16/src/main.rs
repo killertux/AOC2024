@@ -1,5 +1,6 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{btree_map::Entry, BTreeMap, HashMap, HashSet},
+    fmt::Debug,
     fs::read_to_string,
     io::Result,
     rc::Rc,
@@ -41,11 +42,21 @@ fn find_least_cost_paths(
     destination: &(usize, usize),
     walls: &HashSet<(usize, usize)>,
 ) -> (u64, Vec<List<Reindeer>>) {
-    let mut list_of_nodes_to_visit = vec![(0, List::new().prepend(reindeer))];
+    let mut list_of_nodes_to_visit = BTreeMap::new();
+    list_of_nodes_to_visit.insert(0, vec![List::new().prepend(reindeer)]);
     let mut cost_map = HashMap::new();
     let mut possible_paths = Vec::new();
     let mut min_cost = u64::MAX;
-    while let Some((cost, path)) = list_of_nodes_to_visit.pop() {
+    loop {
+        let Some((cost, path)) = list_of_nodes_to_visit
+            .first_entry()
+            .and_then(|mut entry| Some((*entry.key(), entry.get_mut().pop()?)))
+        else {
+            break;
+        };
+        if list_of_nodes_to_visit[&cost].is_empty() {
+            list_of_nodes_to_visit.remove(&cost);
+        }
         let reindeer = path
             .head()
             .expect("Should always have at least one element");
@@ -76,7 +87,14 @@ fn find_least_cost_paths(
                         Direction::East,
                     );
                     let cost = cost + 1;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0 - 1, reindeer.position.1)) {
                     let reindeer = Reindeer::new(
@@ -84,7 +102,14 @@ fn find_least_cost_paths(
                         Direction::North,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0 + 1, reindeer.position.1)) {
                     let reindeer = Reindeer::new(
@@ -92,7 +117,14 @@ fn find_least_cost_paths(
                         Direction::South,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
             }
             Direction::West => {
@@ -102,7 +134,14 @@ fn find_least_cost_paths(
                         Direction::West,
                     );
                     let cost = cost + 1;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0 - 1, reindeer.position.1)) {
                     let reindeer = Reindeer::new(
@@ -110,7 +149,14 @@ fn find_least_cost_paths(
                         Direction::North,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0 + 1, reindeer.position.1)) {
                     let reindeer = Reindeer::new(
@@ -118,7 +164,14 @@ fn find_least_cost_paths(
                         Direction::South,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
             }
             Direction::North => {
@@ -128,7 +181,14 @@ fn find_least_cost_paths(
                         Direction::North,
                     );
                     let cost = cost + 1;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0, reindeer.position.1 + 1)) {
                     let reindeer = Reindeer::new(
@@ -136,7 +196,14 @@ fn find_least_cost_paths(
                         Direction::East,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0, reindeer.position.1 - 1)) {
                     let reindeer = Reindeer::new(
@@ -144,7 +211,14 @@ fn find_least_cost_paths(
                         Direction::West,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
             }
             Direction::South => {
@@ -154,7 +228,14 @@ fn find_least_cost_paths(
                         Direction::South,
                     );
                     let cost = cost + 1;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0, reindeer.position.1 + 1)) {
                     let reindeer = Reindeer::new(
@@ -162,7 +243,14 @@ fn find_least_cost_paths(
                         Direction::East,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
                 if !walls.contains(&(reindeer.position.0, reindeer.position.1 - 1)) {
                     let reindeer = Reindeer::new(
@@ -170,7 +258,14 @@ fn find_least_cost_paths(
                         Direction::West,
                     );
                     let cost = cost + 1001;
-                    list_of_nodes_to_visit.push((cost, path.prepend(reindeer)));
+                    match list_of_nodes_to_visit.entry(cost) {
+                        Entry::Occupied(mut paths) => {
+                            paths.get_mut().push(path.prepend(reindeer));
+                        }
+                        Entry::Vacant(vacant) => {
+                            vacant.insert(vec![path.prepend(reindeer)]);
+                        }
+                    };
                 }
             }
         }
@@ -251,12 +346,14 @@ enum Direction {
 
 /// Copied from https://rust-unofficial.github.io/too-many-lists/third-final.html
 /// Using an imuttable linked list to avoid unecessary clones
+#[derive(Debug)]
 pub struct List<T> {
     head: Link<T>,
 }
 
 type Link<T> = Option<Rc<Node<T>>>;
 
+#[derive(Debug)]
 struct Node<T> {
     elem: T,
     next: Link<T>,
