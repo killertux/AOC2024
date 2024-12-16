@@ -1,6 +1,6 @@
 .idea/
 **/target/
 **/dist-newstyle/
-**/example.txt
+**/example*.txt
 **/input.txt
 **/.DS_Store/
