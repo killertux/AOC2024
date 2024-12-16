@@ -65,6 +65,9 @@ fn find_least_cost_paths(
         } else {
             cost_map.insert(reindeer.clone(), cost);
         }
+        if cost > min_cost {
+            continue;
+        }
         match reindeer.direction {
             Direction::East => {
                 if !walls.contains(&(reindeer.position.0, reindeer.position.1 + 1)) {
