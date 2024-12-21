@@ -18,14 +18,14 @@ static DIRECTIONAL_KEYPAD: [[char; 3]; 2] = [['#', '^', 'A'], ['<', 'V', '>']];
 static DIRECTIONAL_START: (usize, usize) = (0, 2);
 
 fn main() -> Result<()> {
-    println!("Part 1 example: {}", part_1("example.txt")?);
-    println!("Part 1 result: {}", part_1("input.txt")?);
-    // println!("Part 2 example: {}", part_2("example.txt")?);
-    // println!("Part 2 result: {}", part_2("input.txt", 100)?);
+    println!("Part 1 example: {}", solution("example.txt", 2)?);
+    println!("Part 1 result: {}", solution("input.txt", 2)?);
+    println!("Part 2 example: {}", solution("example.txt", 25)?);
+    println!("Part 2 result: {}", solution("input.txt", 25)?);
     Ok(())
 }
 
-fn part_1(file: &str) -> Result<u64> {
+fn solution(file: &str, n_robots: usize) -> Result<u64> {
     let data = read_to_string(file)?;
     let codes = data.split('\n').filter(|c| !c.is_empty());
     let mut result = 0;
@@ -38,26 +38,48 @@ fn part_1(file: &str) -> Result<u64> {
             .parse()
             .expect("Error parsing code");
         let paths = find_path(code, &NUMERIC_KEYPAD, &NUMERIC_START);
-        let paths = handle_directional_keypad(paths);
-        let paths = handle_directional_keypad(paths);
-        result += n_code * paths[0].len() as u64;
+        let mut memoization = HashMap::new();
+        let n = paths
+            .into_iter()
+            .map(|path| handle_robot(path.into_iter().collect(), &mut memoization, n_robots))
+            .min()
+            .expect("Should find at least one solution");
+        result += n_code * n as u64;
     }
     Ok(result)
 }
 
-fn handle_directional_keypad(paths: Vec<Vec<char>>) -> Vec<Vec<char>> {
-    let mut min_paths = Vec::new();
-    let mut min_path_size = usize::MAX;
-    for path in paths {
-        let n_paths = find_path(path, &DIRECTIONAL_KEYPAD, &DIRECTIONAL_START);
-        if n_paths[0].len() < min_path_size {
-            min_path_size = n_paths[0].len();
-            min_paths = n_paths;
-        } else if n_paths[0].len() == min_path_size {
-            min_paths.extend(n_paths);
+fn handle_robot(
+    path: String,
+    memoization: &mut HashMap<(String, usize), usize>,
+    n_robot: usize,
+) -> usize {
+    let parts = path.split_inclusive('A');
+    let mut result = 0;
+    for part in parts {
+        if let Some(size) = memoization.get(&(part.to_string(), n_robot)) {
+            result += size;
+        } else {
+            let size = find_path(
+                part.chars().collect(),
+                &DIRECTIONAL_KEYPAD,
+                &DIRECTIONAL_START,
+            )
+            .into_iter()
+            .map(|path| {
+                if n_robot == 1 {
+                    path.len()
+                } else {
+                    handle_robot(path.into_iter().collect(), memoization, n_robot - 1)
+                }
+            })
+            .min()
+            .expect("Should find one solution at least");
+            memoization.insert((part.to_string(), n_robot), size);
+            result += size;
         }
     }
-    min_paths
+    result
 }
 
 fn find_path(code: Vec<char>, keypad: &[[char; 3]], start: &(usize, usize)) -> Vec<Vec<char>> {
@@ -79,6 +101,7 @@ fn find_path(code: Vec<char>, keypad: &[[char; 3]], start: &(usize, usize)) -> V
         }
         start = result.1
     }
+
     result_paths
 }
 
